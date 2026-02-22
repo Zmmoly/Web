@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>لوحة الإدارة — مشروع القرآن</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green:  #1a7f4b;
+    --gold:   #c9a84c;
+    --red:    #dc2626;
+    --bg:     #0f1117;
+    --card:   #1a1d27;
+    --border: #2a2d3a;
+    --text:   #e8eaf0;
+    --muted:  #6b7280;
+    --accent: #22c55e;
+  }
+
+  body {
+    font-family: 'Tajawal', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 24px 16px;
+  }
+
+  /* ── Header ── */
+  header {
+    text-align: center;
+    margin-bottom: 32px;
+    position: relative;
+  }
+  .header-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--green), var(--gold));
+    color: #fff;
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 4px 14px;
+    border-radius: 999px;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+  header h1 {
+    font-size: 1.8rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #fff 40%, var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .live-dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    margin-left: 8px;
+    animation: pulse 1.5s infinite;
+    vertical-align: middle;
+  }
+  @keyframes pulse {
+    0%,100% { opacity:1; transform:scale(1); }
+    50%      { opacity:.4; transform:scale(1.4); }
+  }
+
+  /* ── Grid ── */
+  .grid-4 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  @media(min-width:600px) { .grid-4 { grid-template-columns: repeat(4,1fr); } }
+
+  /* ── Stat Card ── */
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 16px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--green), var(--gold));
+  }
+  .stat-icon { font-size: 1.6rem; margin-bottom: 8px; }
+  .stat-value {
+    font-size: 1.9rem;
+    font-weight: 900;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-label {
+    font-size: .75rem;
+    color: var(--muted);
+  }
+
+  /* ── Progress Card ── */
+  .progress-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  .progress-card h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .big-pct {
+    font-size: 2.4rem;
+    font-weight: 900;
+    color: var(--gold);
+  }
+  .prog-bar-bg {
+    height: 18px;
+    background: var(--border);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .prog-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green), var(--gold));
+    border-radius: 999px;
+    transition: width 1s ease;
+    position: relative;
+  }
+  .prog-bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.15) 50%, transparent 100%);
+    animation: shimmer 2s infinite;
+  }
+  @keyframes shimmer {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+  .prog-sub {
+    font-size: .8rem;
+    color: var(--muted);
+    text-align: left;
+  }
+
+  /* ── Table Card ── */
+  .table-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+    overflow-x: auto;
+  }
+  .table-card h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .82rem;
+  }
+  th {
+    text-align: right;
+    color: var(--muted);
+    font-weight: 600;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,.02); }
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: .72rem;
+    font-weight: 700;
+  }
+  .badge-green { background: rgba(34,197,94,.15); color: var(--accent); }
+  .badge-gold  { background: rgba(201,168,76,.15); color: var(--gold); }
+
+  /* ── Actions ── */
+  .actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Tajawal', sans-serif;
+    font-size: .88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity .2s, transform .1s;
+  }
+  .btn:active { transform: scale(.97); }
+  .btn:hover  { opacity: .85; }
+  .btn-primary { background: var(--green); color: #fff; }
+  .btn-gold    { background: var(--gold);  color: #fff; }
+  .btn-outline {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  /* ── Last updated ── */
+  .last-updated {
+    text-align: center;
+    font-size: .75rem;
+    color: var(--muted);
+    margin-top: 8px;
+  }
+
+  /* ── Loading ── */
+  .loading-text { color: var(--muted); font-size: .85rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-badge">Admin Dashboard</div>
+  <h1>لوحة إدارة مشروع القرآن <span class="live-dot"></span></h1>
+</header>
+
+<!-- Stats -->
+<div class="grid-4">
+  <div class="stat-card">
+    <div class="stat-icon">🎙</div>
+    <div class="stat-value" id="s-total">—</div>
+    <div class="stat-label">إجمالي التسجيلات</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon">📦</div>
+    <div class="stat-value" id="s-batch">—</div>
+    <div class="stat-label">حجم الدفعة (MB)</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon">🚀</div>
+    <div class="stat-value" id="s-batches">—</div>
+    <div class="stat-label">دفعات مرفوعة</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon">🎯</div>
+    <div class="stat-value" id="s-pct">—</div>
+    <div class="stat-label">نسبة الإنجاز</div>
+  </div>
+</div>
+
+<!-- Goal Progress -->
+<div class="progress-card">
+  <h2>
+    <span>التقدم نحو الهدف النهائي</span>
+    <span class="big-pct" id="p-pct">0%</span>
+  </h2>
+  <div class="prog-bar-bg">
+    <div class="prog-bar-fill" id="p-fill" style="width:0%"></div>
+  </div>
+  <div class="prog-sub">
+    <span id="p-done">0</span> / 1,000,000 تسجيل
+  </div>
+</div>
+
+<!-- Actions -->
+<div class="actions">
+  <button class="btn btn-primary" onclick="fetchStats()">🔄 تحديث</button>
+  <button class="btn btn-gold"    onclick="downloadCSV()">⬇️ تصدير CSV</button>
+  <button class="btn btn-outline" onclick="window.open(BACKEND+'/stats','_blank')">🔗 API مباشر</button>
+</div>
+
+<!-- Batches Table -->
+<div class="table-card">
+  <h2>📋 سجل الدفعات المرفوعة</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>اسم الدفعة</th>
+        <th>عدد الملفات</th>
+        <th>الحجم (MB)</th>
+        <th>وقت الرفع</th>
+        <th>الحالة</th>
+      </tr>
+    </thead>
+    <tbody id="batches-body">
+      <tr><td colspan="5" class="loading-text" style="text-align:center">جارٍ التحميل…</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="last-updated">آخر تحديث: <span id="last-time">—</span></div>
+
+<script>
+const BACKEND = "https://quran-collector.zmmoly.workers.dev";
+const GOAL    = 1_000_000;
+
+async function fetchStats() {
+  try {
+    const res  = await fetch(BACKEND + "/stats");
+    const data = await res.json();
+
+    const total   = data.total_recordings ?? 0;
+    const batchMb = data.current_batch_mb ?? 0;
+    const batches = data.total_batches    ?? 0;
+    const pct     = Math.min((total / GOAL) * 100, 100);
+    const pctStr  = pct < 0.01 ? "<0.01" : pct.toFixed(3);
+
+    document.getElementById("s-total").textContent   = total.toLocaleString("ar-EG");
+    document.getElementById("s-batch").textContent   = batchMb;
+    document.getElementById("s-batches").textContent = batches;
+    document.getElementById("s-pct").textContent     = pctStr + "%";
+    document.getElementById("p-pct").textContent     = pctStr + "%";
+    document.getElementById("p-fill").style.width    = pct + "%";
+    document.getElementById("p-done").textContent    = total.toLocaleString("ar-EG");
+    document.getElementById("last-time").textContent = new Date().toLocaleTimeString("ar-EG");
+
+    // Render batches table
+    const tbody = document.getElementById("batches-body");
+    if (data.batches && data.batches.length > 0) {
+      tbody.innerHTML = data.batches.map(b => `
+        <tr>
+          <td>${b.batch_name ?? "—"}</td>
+          <td>${b.file_count ?? "—"}</td>
+          <td>${b.size_mb ?? "—"}</td>
+          <td>${b.uploaded_at ? new Date(b.uploaded_at).toLocaleString("ar-EG") : "—"}</td>
+          <td><span class="badge ${b.status === 'uploaded' ? 'badge-green' : 'badge-gold'}">${b.status ?? "—"}</span></td>
+        </tr>
+      `).join("");
+    } else {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--muted)">لا توجد دفعات بعد</td></tr>`;
+    }
+
+  } catch (e) {
+    document.getElementById("last-time").textContent = "فشل الاتصال — " + e.message;
+  }
+}
+
+async function downloadCSV() {
+  try {
+    const res  = await fetch(BACKEND + "/stats");
+    const data = await res.json();
+    const rows = [["batch_name","file_count","size_mb","uploaded_at","status"]];
+    (data.batches || []).forEach(b => {
+      rows.push([b.batch_name, b.file_count, b.size_mb, b.uploaded_at, b.status]);
+    });
+    const csv = "\uFEFF" + rows.map(r => r.join(",")).join("\n");
+    const a   = document.createElement("a");
+    a.href    = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+    a.download = "quran_batches.csv";
+    a.click();
+  } catch(e) {
+    alert("فشل التصدير: " + e.message);
+  }
+}
+
+// Init
+fetchStats();
+setInterval(fetchStats, 30000);
+</script>
+</body>
+</html>
